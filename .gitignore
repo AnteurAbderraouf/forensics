@@ -21,6 +21,7 @@ secrets.*
 .vscode/
 .idea/
 *.swp
+.claude/
 
 ## dechets de l'os sans aucune valeur pour notre projet, hors sujet
 .DS_Store
