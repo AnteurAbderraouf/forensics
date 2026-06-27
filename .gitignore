@@ -1,0 +1,36 @@
+## se sont les fichiers bytcode de python
+## pas necessaire de les versionner, peuvent differer entre les versions de python -> encombrant
+## peuvent etre generee par n'importe qui qui execute le code de toute facon
+__pycache__/
+*.pyc
+
+## contiennent plusieurs lib installee et Mo inutiles
+## reconstructible simplement avec un requirements.txt et eviter tout leurs poid
+.venv/
+venv/
+env/
+
+## risque de fuite de credentials
+.env
+*.env
+secrets.*
+*.key
+*.pem
+
+## des configs personnelles qu'on impose pas au autres qui clonent le repo
+.vscode/
+.idea/
+*.swp
+
+## dechets de l'os sans aucune valeur pour notre projet, hors sujet
+.DS_Store
+Thumbs.db
+
+## fichier d'apprentissage, separee du produit final
+claude.md
+MISSION.md
+NOTES.md
+lessons/
+reference/
+learning-records/
+assets/
