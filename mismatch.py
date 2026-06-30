@@ -9,23 +9,6 @@ MAGIC_BYTES = {
     b'\x1f\x8b':           'GZIP',
 }
 
-EXPECTED_TYPE = {
-    ".png":  "PNG",
-    ".jpg":  "JPEG",
-    ".jpeg": "JPEG",       
-    ".pdf":  "PDF",
-    ".zip":  "ZIP",
-    ".docx": "ZIP",        
-    ".xlsx": "ZIP",
-    ".pptx": "ZIP",
-    ".jar":  "ZIP",        
-    ".exe":  "EXE",
-    ".dll":  "EXE",
-    ".sys":  "EXE",
-    ".gif":  "GIF",
-    ".gz":  "GZIP",
-}
-
 def detect_type(path):
     try:
         with open(path, "rb") as f:
@@ -36,3 +19,11 @@ def detect_type(path):
         if first_bytes.startswith(magic):
             return filetype
     return None
+
+def compute_status(detected, expected):
+    if detected is None or expected is None:
+        return None
+    elif expected == detected:
+        return True
+    else:
+        return False
