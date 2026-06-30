@@ -6,9 +6,27 @@ MAGIC_BYTES = {
     b'\xff\xd8\xff':       'JPEG',
     b'%PDF':               'PDF',
     b'PK\x03\x04':         'ZIP',
-    b'MZ':                 'MZ',
+    b'MZ':                 'EXE',
     b'GIF8':               'GIF',
     b'\x7fELF':            'ELF',
+    b'\x1f\x8b':           'GZIP',
+}
+
+EXPECTED_TYPE = {
+    ".png":  "PNG",
+    ".jpg":  "JPEG",
+    ".jpeg": "JPEG",       
+    ".pdf":  "PDF",
+    ".zip":  "ZIP",
+    ".docx": "ZIP",        
+    ".xlsx": "ZIP",
+    ".pptx": "ZIP",
+    ".jar":  "ZIP",        
+    ".exe":  "EXE",
+    ".dll":  "EXE",
+    ".sys":  "EXE",
+    ".gif":  "GIF",
+    ".gz":  "GZIP",
 }
 
 def detect_type(path):
@@ -35,7 +53,14 @@ def main():
         return
     for item in target.rglob("*"):
         if item.is_file():
-            print(item, "->", detect_type(item) or "unknown")
+            detected = detect_type(item)
+            expected = EXPECTED_TYPE.get(item.suffix.lower())
+            if detected is None or expected is None:
+                print("[UNKNOWN]", item, "-> no signature match", "expected:", expected, "detected:", detected)
+            elif expected == detected:
+                print("[OK]", item, "->", detected)
+            else:
+                print("[MISMATCH]", item, "->", detected, "expected:", expected)
 
 if __name__ == "__main__":
     main()
