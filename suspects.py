@@ -1,16 +1,7 @@
 import argparse
 from pathlib import Path
-
-MAGIC_BYTES = {
-    b'\x89PNG\r\n\x1a\n': 'PNG',
-    b'\xff\xd8\xff':       'JPEG',
-    b'%PDF':               'PDF',
-    b'PK\x03\x04':         'ZIP',
-    b'MZ':                 'EXE',
-    b'GIF8':               'GIF',
-    b'\x7fELF':            'ELF',
-    b'\x1f\x8b':           'GZIP',
-}
+from mismatch import compute_status, detect_type
+from entropy import calculate_entropy
 
 EXPECTED_TYPE = {
     ".png":  "PNG",
@@ -29,17 +20,6 @@ EXPECTED_TYPE = {
     ".gz":  "GZIP",
 }
 
-def detect_type(path):
-    try:
-        with open(path, "rb") as f:
-            first_bytes = f.read(8)
-    except PermissionError:
-        return "Can't open file"
-    for magic, filetype in MAGIC_BYTES.items():
-        if first_bytes.startswith(magic):
-            return filetype
-    return None
-
 def main():
     parser = argparse.ArgumentParser(description="Tool that inspects a directory")
     parser.add_argument("directory", help="Directory to inspect")
@@ -55,12 +35,14 @@ def main():
         if item.is_file():
             detected = detect_type(item)
             expected = EXPECTED_TYPE.get(item.suffix.lower())
-            if detected is None or expected is None:
-                print("[UNKNOWN]", item, "-> no signature match", "expected:", expected, "detected:", detected)
-            elif expected == detected:
-                print("[OK]", item, "->", detected)
+            status = compute_status(detected, expected)
+            entropy = calculate_entropy(item)
+            if status is None:
+                print(f"[UNKNOWN] {item} -> no signature match, expected : {expected}, detected : {detected}, {entropy:.4f}")
+            elif status is True:
+                print(f"[MATCH] {item} -> {detected}, {entropy:.4f}")
             else:
-                print("[MISMATCH]", item, "->", detected, "expected:", expected)
+                print(f"[MISMATCH] {item} -> {detected}, expected : {expected}, {entropy:.4f}")
 
 if __name__ == "__main__":
     main()
