@@ -9,16 +9,19 @@ MAGIC_BYTES = {
     b'\x1f\x8b':           'GZIP',
 }
 
+
 def detect_type(path):
-    try:
-        with open(path, "rb") as f:
-            first_bytes = f.read(8)
-    except PermissionError:
-        return "Can't open file"
+    """
+    Return the file type found from its first bytes, or None if no signature matches.
+    Raises OSError if the file can't be read.
+    """
+    with open(path, "rb") as f:
+        first_bytes = f.read(8)
     for magic, filetype in MAGIC_BYTES.items():
         if first_bytes.startswith(magic):
             return filetype
     return None
+
 
 def compute_status(detected, expected):
     if detected is None or expected is None:
